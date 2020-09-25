@@ -1,0 +1,24 @@
+---
+- name: Show upgradable packages.
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Update package information cache.
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Check for upgradable packages.
+      shell:
+        cmd: apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }'
+        warn: false
+      register: upgradable_packages
+      changed_when: false
+
+    - name: Show upgradable packages.
+      debug:
+        msg: "{{ upgradable_packages.stdout_lines | join(', ') }}"
+      when: upgradable_packages.stdout != ''
+      changed_when: false

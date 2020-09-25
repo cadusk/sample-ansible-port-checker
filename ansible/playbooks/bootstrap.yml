@@ -1,0 +1,33 @@
+---
+- name: Bootstrap controller
+  hosts: controller
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - common
+
+- name: Bootstrap servers
+  hosts: all
+  become: yes
+  gather_facts: yes
+  serial: 3
+
+  roles:
+    - common
+
+- name: Install WebServer
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - geerlingguy.apache
+
+- name: Install Database
+  hosts: dbservers
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - geerlingguy.postgresql
